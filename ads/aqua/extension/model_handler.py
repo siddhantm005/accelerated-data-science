@@ -323,21 +323,21 @@ class AquaHuggingFaceHandler(AquaAPIhandler):
         )
 
 
-class AquaModelTokenizerConfigHandler(AquaAPIhandler):
+class AquaModelChatTemplateHandler(AquaAPIhandler):
     def get(self, model_id):
         """
-        Handles requests for retrieving the Hugging Face tokenizer configuration of a specified model.
-        Expected request format: GET /aqua/models/<model-ocid>/tokenizer
+        Handles requests for retrieving the chat template from custom metadata of a specified model.
+        Expected request format: GET /aqua/models/<model-ocid>/chat-template
 
         """
 
         path_list = urlparse(self.request.path).path.strip("/").split("/")
-        # Path should be /aqua/models/ocid1.iad.ahdxxx/tokenizer
-        # path_list=['aqua','models','<model-ocid>','tokenizer']
+        # Path should be /aqua/models/ocid1.iad.ahdxxx/chat-template
+        # path_list=['aqua','models','<model-ocid>','chat-template']
         if (
             len(path_list) == 4
             and is_valid_ocid(path_list[2])
-            and path_list[3] == "tokenizer"
+            and path_list[3] == "chat-template"
         ):
             try:
                 oci_data_science_model = OCIDataScienceModel.from_id(model_id)
@@ -353,7 +353,7 @@ class AquaModelTokenizerConfigHandler(AquaAPIhandler):
         Handles POST requests to add a custom chat_template metadata artifact to a model.
 
         Expected request format:
-        POST /aqua/models/<model-ocid>/tokenizer
+        POST /aqua/models/<model-ocid>/chat-template
         Body: { "chat_template": "<your_template_string>" }
 
         """
@@ -423,7 +423,7 @@ __handlers__ = [
     ("model/?([^/]*)", AquaModelHandler),
     ("model/?([^/]*)/license", AquaModelLicenseHandler),
     ("model/?([^/]*)/readme", AquaModelReadmeHandler),
-    ("model/?([^/]*)/tokenizer", AquaModelTokenizerConfigHandler),
+    ("model/?([^/]*)/chat-template", AquaModelChatTemplateHandler),
     ("model/hf/search/?([^/]*)", AquaHuggingFaceHandler),
     (
         "model/?([^/]*)/definedMetadata/?([^/]*)",
